@@ -3,9 +3,10 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const cron = require("node-cron");
-const { getAllCustomers } = require("./utils/cronTasks");
+
 const main = require("./utils/mainTasks");
 const app = express();
+
 app.use(express.json());
 app.use(cors());
 app.use(cookieParser());

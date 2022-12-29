@@ -28,7 +28,6 @@ const main = async () => {
   } catch (error) {
     console.error(error);
   }
-
   console.log(`Fin traitement : ${new Date().toISOString()}`);
 };
 module.exports = main;
