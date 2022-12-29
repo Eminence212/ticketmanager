@@ -15,22 +15,31 @@ const userController = {
       const {
         name,
         inbound,
+        inbound_amp,
         outbound,
+        outbound_amp,
         erreur,
+        erreur_amp,
         archive,
+        archive_amp,
         host,
         port,
         username,
         password,
+        response_slug,
         userId,
       } = req.body;
       // Check  if the user name is already registered
       if (
         !name ||
         !inbound ||
+        !inbound_amp ||
         !outbound ||
+        !outbound_amp ||
         !erreur ||
+        !erreur_amp ||
         !archive ||
+        !archive_amp ||
         !host ||
         !port ||
         !username ||
@@ -50,49 +59,96 @@ const userController = {
       const c_inbound = await Customer.findOne({
         where: {
           [Op.or]: [
-            { name: inbound.toLowerCase() },
-            { name: inbound.toUpperCase() },
+            { inbound: inbound.toLowerCase() },
+            { inbound: inbound.toUpperCase() },
           ],
         },
       });
       if (c_inbound)
         return res.status(400).json({ msg: `Lien ${inbound} déjà attribué` });
+      const c_inbound_amp = await Customer.findOne({
+        where: {
+          [Op.or]: [
+            { inbound_amp: inbound_amp.toLowerCase() },
+            { inbound_amp: inbound_amp.toUpperCase() },
+          ],
+        },
+      });
+      if (c_inbound_amp)
+        return res
+          .status(400)
+          .json({ msg: `Lien amplitude ${inbound_amp} déjà attribué` });
       const c_outbound = await Customer.findOne({
         where: {
           [Op.or]: [
-            { name: outbound.toLowerCase() },
-            { name: outbound.toUpperCase() },
+            { outbound: outbound.toLowerCase() },
+            { outbound: outbound.toUpperCase() },
           ],
         },
       });
       if (c_outbound)
         return res.status(400).json({ msg: `Lien ${outbound} déjà attribué` });
-
+      const c_outbound_amp = await Customer.findOne({
+        where: {
+          [Op.or]: [
+            { outbound_amp: outbound_amp.toLowerCase() },
+            { outbound_amp: outbound_amp.toUpperCase() },
+          ],
+        },
+      });
+      if (c_outbound_amp)
+        return res
+          .status(400)
+          .json({ msg: `Lien amplitude ${outbound_amp} déjà attribué` });
       const c_erreur = await Customer.findOne({
         where: {
           [Op.or]: [
-            { name: erreur.toLowerCase() },
-            { name: erreur.toUpperCase() },
+            { erreur: erreur.toLowerCase() },
+            { erreur: erreur.toUpperCase() },
           ],
         },
       });
       if (c_erreur)
         return res.status(400).json({ msg: `Lien ${erreur} déjà attribué` });
+      const c_erreur_amp = await Customer.findOne({
+        where: {
+          [Op.or]: [
+            { erreur_amp: erreur_amp.toLowerCase() },
+            { erreur_amp: erreur_amp.toUpperCase() },
+          ],
+        },
+      });
+      if (c_erreur_amp)
+        return res
+          .status(400)
+          .json({ msg: `Lien amplitude ${erreur_amp} déjà attribué` });
       const c_archive = await Customer.findOne({
         where: {
           [Op.or]: [
-            { name: archive.toLowerCase() },
-            { name: archive.toUpperCase() },
+            { archive: archive.toLowerCase() },
+            { archive: archive.toUpperCase() },
           ],
         },
       });
       if (c_archive)
         return res.status(400).json({ msg: `Lien ${archive} déjà attribué` });
+      const c_archive_amp = await Customer.findOne({
+        where: {
+          [Op.or]: [
+            { archive_amp: archive_amp.toLowerCase() },
+            { archive_amp: archive_amp.toUpperCase() },
+          ],
+        },
+      });
+      if (c_archive_amp)
+        return res
+          .status(400)
+          .json({ msg: `Lien amplitude ${archive_amp} déjà attribué` });
       const c_username = await Customer.findOne({
         where: {
           [Op.or]: [
-            { name: username.toLowerCase() },
-            { name: username.toUpperCase() },
+            { username: username.toLowerCase() },
+            { username: username.toUpperCase() },
           ],
         },
       });
@@ -107,13 +163,18 @@ const userController = {
       const newCustomer = {
         name,
         inbound,
+        inbound_amp,
         outbound,
+        outbound_amp,
         erreur,
+        erreur_amp,
         archive,
+        archive_amp,
         host,
         port,
         username,
         password: criptString(password),
+        response_slug,
         userId,
       };
       //Connexion au server SFTP
@@ -154,13 +215,18 @@ const userController = {
           "name",
           "username",
           "inbound",
+          "inbound_amp",
           "outbound",
+          "outbound_amp",
           "erreur",
+          "erreur_amp",
           "archive",
+          "archive_amp",
           "host",
           "port",
           "enable",
           "autovalidation",
+          "response_slug",
           "createdAt",
           "updatedAt",
         ],
@@ -203,13 +269,18 @@ const userController = {
           "name",
           "username",
           "inbound",
+          "inbound_amp",
           "outbound",
+          "outbound_amp",
           "erreur",
+          "erreur_amp",
           "archive",
+          "archive_amp",
           "host",
           "port",
           "enable",
           "autovalidation",
+          "response_slug",
           "createdAt",
           "updatedAt",
         ],
@@ -231,13 +302,17 @@ const userController = {
       const {
         name,
         inbound,
+        inbound_amp,
         outbound,
+        outbound_amp,
         erreur,
-        archive,
+        erreur_amp,
+        archive_amp,
         host,
         port,
         enable,
         autovalidation,
+        response_slug,
       } = req.body;
       const customer = await Customer.findOne({ where: { id } });
       if (!customer) {
@@ -246,9 +321,13 @@ const userController = {
       if (
         !name ||
         !inbound ||
+        !inbound_amp ||
         !outbound ||
+        !outbound_amp ||
         !erreur ||
+        !erreur_amp ||
         !archive ||
+        !archive_amp ||
         !host ||
         !port
       )
@@ -258,25 +337,35 @@ const userController = {
       if (
         customer.name !== name ||
         customer.inbound !== inbound ||
+        customer.inbound_amp !== inbound ||
         customer.outbound !== outbound ||
+        customer.outbound_amp !== outbound ||
         customer.erreur !== erreur ||
+        customer.erreur_amp !== erreur ||
         customer.archive !== archive ||
+        customer.archive_amp !== archive ||
         customer.host !== host ||
         customer.port !== port ||
         customer.enable !== enable ||
-        Customer.autovalidation !== autovalidation
+        Customer.autovalidation !== autovalidation ||
+        Customer.response_slug !== response_slug
       )
         await Customer.update(
           {
             name,
             inbound,
+            inbound_amp,
             outbound,
+            outbound_amp,
             erreur,
+            erreur_amp,
             archive,
+            archive_amp,
             host,
             port,
             enable,
             autovalidation,
+            response_slug
           },
           { where: { id } }
         );

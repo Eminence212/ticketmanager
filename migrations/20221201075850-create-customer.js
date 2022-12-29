@@ -19,7 +19,17 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
+      inbound_amp: {
+        type: Sequelize.STRING(255),
+        allowNull: false,
+        unique: true,
+      },
       outbound: {
+        type: Sequelize.STRING(255),
+        allowNull: false,
+        unique: true,
+      },
+      outbound_amp: {
         type: Sequelize.STRING(255),
         allowNull: false,
         unique: true,
@@ -29,7 +39,17 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
+      erreur_amp: {
+        type: Sequelize.STRING(255),
+        allowNull: false,
+        unique: true,
+      },
       archive: {
+        type: Sequelize.STRING(255),
+        allowNull: false,
+        unique: true,
+      },
+      archive_amp: {
         type: Sequelize.STRING(255),
         allowNull: false,
         unique: true,
@@ -47,22 +67,22 @@ module.exports = {
       host: {
         type: Sequelize.STRING(255),
         allowNull: false,
-        unique: true,
       },
       port: {
         type: Sequelize.STRING(255),
         allowNull: false,
-        unique: true,
       },
       username: {
         type: Sequelize.STRING(255),
         allowNull: false,
-        unique: true,
       },
       password: {
         type: Sequelize.STRING(255),
         allowNull: false,
-        unique: true,
+      },
+      response_slug: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
       },
       userId: {
         type: Sequelize.INTEGER,

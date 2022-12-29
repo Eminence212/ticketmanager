@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.03DB" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <CstmrCdtTrfInitn>
+    <GrpHdr>
+      <MsgId>FRN-AP0000000284</MsgId>
+      <CreDtTm>2022-12-06T09:01:18</CreDtTm>
+      <NbOfTxs>1</NbOfTxs>
+      <CtrlSum>9000.00</CtrlSum>
+      <InitgPty>
+        <Nm>Frontier SA</Nm>
+      </InitgPty>
+      <DltPrvtData>
+        <FlwInd>HOMOLOGATION</FlwInd>
+        <DltPrvtDataDtl>
+          <PrvtDtInf>FRONTIER</PrvtDtInf>
+          <Tp>
+            <CdOrPrtry>
+              <Cd>CHANNEL</Cd>
+            </CdOrPrtry>
+          </Tp>
+        </DltPrvtDataDtl>
+      </DltPrvtData>
+    </GrpHdr>
+    <PmtInf>
+      <PmtInfId>FRN-AP0000000284-1</PmtInfId>
+      <PmtMtd>TRF</PmtMtd>
+      <BtchBookg>0</BtchBookg>
+      <NbOfTxs>1</NbOfTxs>
+      <DltPrvtData>
+        <OrdrPrties>
+          <Tp>IMM</Tp>
+          <Md>CREATE</Md>
+        </OrdrPrties>
+      </DltPrvtData>
+      <PmtTpInf>
+        <SvcLvl>
+          <Prtry>SWIFT_SINGLE</Prtry>
+        </SvcLvl>
+      </PmtTpInf>
+      <ReqdExctnDt>2022-12-06</ReqdExctnDt>
+      <Dbtr>
+        <Nm>Frontier Sprl</Nm>
+        <PstlAdr>
+          <StrtNm>238, Route Likasi, c/annexe,</StrtNm>
+          <TwnNm>Lubumbashi</TwnNm>
+          <Ctry>CD</Ctry>
+        </PstlAdr>
+      </Dbtr>
+      <DbtrAcct>
+        <Id>
+          <Othr>
+            <Id>01011341601</Id>
+            <SchmeNm>
+              <Prtry>BKCOM_ACCOUNT</Prtry>
+            </SchmeNm>
+          </Othr>
+        </Id>
+        <Ccy>USD</Ccy>
+      </DbtrAcct>
+      <DbtrAgt>
+        <FinInstnId>
+          <BIC>RAWBCDKIXXX</BIC>
+          <PstlAdr>
+            <Ctry>CD</Ctry>
+          </PstlAdr>
+          <Othr>
+            <Id>05100</Id>
+          </Othr>
+        </FinInstnId>
+        <BrnchId>
+          <Id>05130</Id>
+        </BrnchId>
+      </DbtrAgt>
+      <CdtTrfTxInf>
+        <PmtId>
+          <InstrId>00000286</InstrId>
+          <EndToEndId>00000286</EndToEndId>
+        </PmtId>
+        <Amt>
+          <InstdAmt Ccy="USD">9000.00</InstdAmt>
+        </Amt>
+        <CdtrAgt>
+          <FinInstnId>
+            <BIC>SBICZMLXXXX</BIC>
+          </FinInstnId>
+        </CdtrAgt>
+        <Cdtr>
+          <Nm>LIQUID ROCK PROCESS SOLUTIONS </Nm>
+          <PstlAdr>
+            <StrtNm>PLOT 3755 - 56</StrtNm>
+            <BldgNb>KARIBA ROAD</BldgNb>
+            <PstCd>0000</PstCd>
+            <TwnNm>KITWE</TwnNm>
+            <CtrySubDvsn>ZM-08</CtrySubDvsn>
+            <Ctry>ZM</Ctry>
+          </PstlAdr>
+        </Cdtr>
+        <CdtrAcct>
+          <Id>
+            <Othr>
+              <Id>9130000259067</Id>
+              <SchmeNm>
+                <Prtry>BKCOM_ACCOUNT</Prtry>
+              </SchmeNm>
+            </Othr>
+          </Id>
+          <Ccy>USD</Ccy>
+        </CdtrAcct>
+        <RmtInf>
+          <Ustrd>inv0000001, inv0000002, inv000</Ustrd>
+        </RmtInf>
+      </CdtTrfTxInf>
+    </PmtInf>
+  </CstmrCdtTrfInitn>
+</Document>

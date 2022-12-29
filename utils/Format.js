@@ -15,7 +15,15 @@ const formatDate = (input) => {
     }).format(date)
   );
 };
+const format = (input) => {
+  const date = new Date(input);
+  return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+};
 
+const isToDay = (input) => {
+  return format(new Date(input)) === format(new Date());
+};
 module.exports = {
   formatDate,
+  isToDay,
 };

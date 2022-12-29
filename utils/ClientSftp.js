@@ -1,6 +1,6 @@
 let Client = require("ssh2-sftp-client");
 const { decriptString } = require("./criptograph");
-const { formatDate } = require("./Format");
+const { formatDate, compareDate, isToDay } = require("./Format");
 module.exports = class ClientSftp {
   constructor(host, port, username, password) {
     this.client = new Client();
@@ -29,24 +29,27 @@ module.exports = class ClientSftp {
   async disconnect() {
     await this.client.end();
   }
-  async listFiles(remoteDir, fileGlob) {
- 
+  async listFiles(remoteDir) {
     let fileObjects;
     try {
-      fileObjects = await this.client.list(remoteDir, fileGlob);
+      fileObjects = await this.client.list(remoteDir);
     } catch (err) {
       console.log("Listing failed:", err);
     }
+
     const fileNames = [];
     for (const file of fileObjects) {
-      fileNames.push({
-        name: file.name,
-        type: file.type === "d" ? "directory" : "file",
-        modifyTime: formatDate(file.modifyTime),
-        accessTime: formatDate(file.accessTime),
-      });
+      file.type !== "d" && file.type !== "l"
+        ? isToDay(file.modifyTime) || isToDay(file.accessTime)
+          ? fileNames.push({
+              name: file.name,
+              type: file.type === "d" ? "directory" : "file",
+              modifyTime: formatDate(file.modifyTime),
+              accessTime: formatDate(file.accessTime),
+            })
+          : ""
+        : "";
     }
-
     return fileNames;
   }
   async uploadFile(localFile, remoteFile) {
@@ -79,4 +82,13 @@ module.exports = class ClientSftp {
       console.error(`La suppression des fichiers de ${remoteFile} a échoué`);
     }
   }
+  // async renameFile(from, to) {
+  //   try {
+  //     await this.client.rename(from, to);
+  //     return { state: true, msg: "" };
+  //   } catch (err) {
+  //     console.error(`${err}`);
+  //     return { state: false, msg: err };
+  //   }
+  // }
 };
