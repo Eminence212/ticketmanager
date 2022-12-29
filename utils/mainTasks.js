@@ -7,8 +7,6 @@ const {
   downLoadFiles,
 } = require("./cronTasks");
 
-const allCustomerWorker = new Worker("./workers/allCustomerWorkers.js");
-
 const main = async () => {
   console.log(`Début traitement : ${new Date().toISOString()}`);
   let newCustomers = [];
@@ -16,7 +14,6 @@ const main = async () => {
   try {
     //Récupération des clients
     const customers = await getAllCustomers();
-
     //Stockage en local des fichiers venus des comptes SFTP des clients
     newCustomers = await downLoadCustomersFiles(customers);
 
