@@ -288,7 +288,7 @@ const userController = {
         order: [["name", "ASC"]],
       });
       if (customers) {
-        res.json({ customers, user: req.user });
+        res.json(customers);
       } else {
         return res.status(404).json({ msg: "Non trouvé" });
       }
@@ -365,10 +365,51 @@ const userController = {
             port,
             enable,
             autovalidation,
-            response_slug
+            response_slug,
           },
           { where: { id } }
         );
+      res.json({ msg: "Mise à jour réussie !" });
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
+  enable: async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { enable } = req.body;
+      const customer = await Customer.findOne({ where: { id } });
+      if (!customer) {
+        return res.status(404).json({ msg: "Non trouvée" });
+      }
+
+      await Customer.update(
+        {
+          enable: enable,
+        },
+        { where: { id } }
+      );
+      res.json({ msg: "Mise à jour réussie !" });
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
+  validation: async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { autovalidation } = req.body;
+      const customer = await Customer.findOne({ where: { id } });
+      if (!customer) {
+        return res.status(404).json({ msg: "Non trouvée" });
+      }
+
+      await Customer.update(
+        {
+          autovalidation: autovalidation,
+        },
+        { where: { id } }
+      );
+
       res.json({ msg: "Mise à jour réussie !" });
     } catch (error) {
       return res.status(500).json({ msg: error.message });
