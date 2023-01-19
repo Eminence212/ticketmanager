@@ -1,6 +1,6 @@
+const fsPromises = require("fs/promises");
 const path = require("path");
 const fs = require("fs");
-
 const urlBase = path.join(__dirname, "..", "files");
 
 export const createLocalDirectory = (customer_name, folder_names = []) => {
@@ -27,4 +27,18 @@ export const deleteLocalDirectory = (customer_name) => {
     console.log(`${error} `);
   }
 };
+export const updateLocalDirectory = async (curr_name, new_name) => {
+  const currPath = path.join(urlBase, curr_name);
+  const newPath = path.join(urlBase, new_name);
 
+  try {
+    if (curr_name !== new_name && fs.existsSync(currPath)) {
+      //delete current directory
+      deleteLocalDirectory(curr_name);
+      //create new directory
+      createLocalDirectory(new_name, ["in", "out", "err", "arch"]);
+    }
+  } catch (error) {
+    console.log(`${error} `);
+  }
+};

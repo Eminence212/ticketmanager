@@ -12,7 +12,7 @@ module.exports = {
       name: {
         type: Sequelize.STRING(50),
         allowNull: false,
-        unique: true,
+        unique:true
       },
       inbound: {
         type: Sequelize.STRING(255),

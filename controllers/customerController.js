@@ -1,10 +1,11 @@
 const { User, Customer, sequelize } = require("../models");
 const bcrypt = require("bcrypt");
 const { Op } = require("sequelize");
-const { criptString } = require("../utils/criptograph");
+const { criptString, decriptString } = require("../utils/criptograph");
 const {
   createLocalDirectory,
   deleteLocalDirectory,
+  updateLocalDirectory,
 } = require("../utils/directory");
 const ClientSftp = require("../utils/ClientSftp");
 
@@ -144,23 +145,11 @@ const userController = {
         return res
           .status(400)
           .json({ msg: `Lien amplitude ${archive_amp} déjà attribué` });
-      const c_username = await Customer.findOne({
-        where: {
-          [Op.or]: [
-            { username: username.toLowerCase() },
-            { username: username.toUpperCase() },
-          ],
-        },
-      });
-      if (c_username)
-        return res
-          .status(400)
-          .json({ msg: `Le nom d'utilisateur existe déjà.` });
 
       if (!userId || userId <= 0)
         return res.status(400).json({ msg: "Utilisateur non autorisé." });
 
-      const newCustomer = {
+      let newCustomer = {
         name,
         inbound,
         inbound_amp,
@@ -173,7 +162,7 @@ const userController = {
         host,
         port,
         username,
-        password: criptString(password),
+        password,
         response_slug,
         userId,
       };
@@ -184,16 +173,33 @@ const userController = {
         sftp.disconnect();
         return res.status(400).json({ msg });
       } else {
-        //Création d'un client
-        await Customer.create(newCustomer, { transaction: t });
-        //Création de ses identifiants
-        await User.create(
+        //Véfifier si l'utilisateur existe déjà
+        const c_user = await User.findOne(
           {
-            name: username,
-            password: await bcrypt.hash(password, 12),
+            where: {
+              [Op.or]: [
+                { name: username.toLowerCase() },
+                { name: username.toUpperCase() },
+              ],
+            },
           },
           { transaction: t }
         );
+        if (!c_user) {
+          //Création de ses identifiants
+          const user = await User.create(
+            {
+              name: username,
+              password: await bcrypt.hash(password, 12),
+            },
+            { transaction: t }
+          );
+          newCustomer = { ...newCustomer, userId: user.id };
+        } else {
+          newCustomer = { ...newCustomer, userId: c_user.id };
+        }
+        //Création d'un client
+        await Customer.create(newCustomer, { transaction: t });
         //Création du repertoire locale
         createLocalDirectory(name, ["in", "out", "err", "arch"]);
         await t.commit();
@@ -208,6 +214,7 @@ const userController = {
     }
   },
   getById: async (req, res) => {
+    const newCustomers = [];
     try {
       const customer = await Customer.findByPk(req.params.id, {
         attributes: [
@@ -224,6 +231,7 @@ const userController = {
           "archive_amp",
           "host",
           "port",
+          "password",
           "enable",
           "autovalidation",
           "response_slug",
@@ -278,6 +286,7 @@ const userController = {
           "archive_amp",
           "host",
           "port",
+          "password",
           "enable",
           "autovalidation",
           "response_slug",
@@ -307,9 +316,11 @@ const userController = {
         outbound_amp,
         erreur,
         erreur_amp,
+        archive,
         archive_amp,
         host,
         port,
+        password,
         enable,
         autovalidation,
         response_slug,
@@ -329,7 +340,8 @@ const userController = {
         !archive ||
         !archive_amp ||
         !host ||
-        !port
+        !port ||
+        !password
       )
         return res
           .status(400)
@@ -346,6 +358,7 @@ const userController = {
         customer.archive_amp !== archive ||
         customer.host !== host ||
         customer.port !== port ||
+        customer.password !== password ||
         customer.enable !== enable ||
         Customer.autovalidation !== autovalidation ||
         Customer.response_slug !== response_slug
@@ -363,12 +376,14 @@ const userController = {
             archive_amp,
             host,
             port,
+            password,
             enable,
             autovalidation,
             response_slug,
           },
           { where: { id } }
         );
+      updateLocalDirectory(customer.name, name);
       res.json({ msg: "Mise à jour réussie !" });
     } catch (error) {
       return res.status(500).json({ msg: error.message });
@@ -416,10 +431,11 @@ const userController = {
     }
   },
   delete: async (req, res) => {
+    console.log({ req });
     const t = await sequelize.transaction();
     try {
       const id = parseInt(req.params.id);
-      const username = req.body.username;
+      const username = req.params.username;
 
       if (!id || id <= 0)
         return res.status(400).json({ msg: "L'identifiant invalide." });
@@ -427,7 +443,10 @@ const userController = {
       if (!customer) {
         return res.status(404).json({ msg: "Client non trouvé" });
       }
-      const user = await User.findOne({ where: { name: username } });
+      const user = await User.findOne({
+        where: { name: username },
+        include: [{ model: Customer }],
+      });
       if (!user) {
         return res.status(404).json({ msg: "Utilisateur non trouvé" });
       }
@@ -435,10 +454,13 @@ const userController = {
         where: { id: id },
         transaction: t,
       });
-      await User.destroy({
-        where: { name: username },
-        transaction: t,
-      });
+      if (user.Customers.length <= 1) {
+        await User.destroy({
+          where: { name: username },
+          transaction: t,
+        });
+      }
+
       deleteLocalDirectory(customer.name);
       await t.commit();
       res.json({ msg: "Supprimé avec succès !" });

@@ -15,7 +15,7 @@ module.exports = class ClientSftp {
         host: this.host,
         port: this.port,
         username: this.username,
-        password: decriptString(this.password),
+        password: this.password,
       });
       return { state: true, msg: "" };
     } catch (err) {
