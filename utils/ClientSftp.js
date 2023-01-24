@@ -1,5 +1,5 @@
 let Client = require("ssh2-sftp-client");
-const { decriptString } = require("./criptograph");
+
 const { formatDate, compareDate, isToDay } = require("./Format");
 module.exports = class ClientSftp {
   constructor(host, port, username, password) {
@@ -48,6 +48,27 @@ module.exports = class ClientSftp {
               accessTime: formatDate(file.accessTime),
             })
           : ""
+        : "";
+    }
+    return fileNames;
+  }
+  async list(remoteDir) {
+    let fileObjects;
+    try {
+      fileObjects = await this.client.list(remoteDir);
+    } catch (err) {
+      console.log("Listing failed:", err);
+    }
+
+    const fileNames = [];
+    for (const file of fileObjects) {
+      file.type !== "d" && file.type !== "l"
+        ? fileNames.push({
+            name: file.name,
+            type: file.type === "d" ? "directory" : "file",
+            modifyTime: file.modifyTime,
+            accessTime: file.accessTime,
+          })
         : "";
     }
     return fileNames;

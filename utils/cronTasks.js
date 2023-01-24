@@ -1,7 +1,8 @@
 const { User, Customer, sequelize } = require("../models");
-const { decriptString, criptString } = require("./criptograph");
+
 const ClientSftp = require("./ClientSftp");
 const path = require("path");
+const { formatDate, isEqual } = require("./Format");
 require("dotenv").config();
 const getAllCustomers = async () => {
   const customers = await Customer.findAll({
@@ -127,10 +128,79 @@ const getRemoteCustomerInfos = async (customer) => {
 
   return { ...customer, files };
 };
+const getCustomerRemoteFiles = async (customer, directory, createdAt) => {
+  const { host, port, username, password, inbound, outbound, erreur, archive } =
+    customer;
+
+  let files = {
+    in: [],
+    out: [],
+    err: [],
+    arch: [],
+  };
+
+  //Connexion au server SFTP
+  const sftp = new ClientSftp(host, port, username, password);
+
+  const { state, msg } = await sftp.connect();
+
+  if (!state) {
+    sftp.disconnect();
+  } else {
+    files = {
+      ...files,
+      in: await sftp.list(`.${inbound}`),
+      out: await sftp.list(`.${outbound}`),
+      err: await sftp.list(`.${erreur}`),
+      arch: await sftp.list(`.${archive}`),
+    };
+
+    sftp.disconnect();
+  }
+
+  return files[directory].filter(
+    (item) =>
+      isEqual(item.modifyTime, createdAt) || isEqual(item.accessTime, createdAt)
+  );
+};
+const getCbsRemoteFiles = async (customer, directory, createdAt) => {
+  const { inbound_amp, outbound_amp, erreur_amp, archive_amp } = customer;
+  const { SFTP_SERVER, SFTP_USER, SFTP_PASSWORD, SFTP_PORT } = process.env;
+
+  let files = {
+    in: [],
+    out: [],
+    err: [],
+    arch: [],
+  };
+
+  //Connexion au server SFTP
+  const sftp = new ClientSftp(SFTP_SERVER, SFTP_PORT, SFTP_USER, SFTP_PASSWORD);
+
+  const { state, msg } = await sftp.connect();
+
+  if (!state) {
+    sftp.disconnect();
+  } else {
+    files = {
+      ...files,
+      in: await sftp.list(`${inbound_amp}`),
+      out: await sftp.list(`${outbound_amp}`),
+      err: await sftp.list(`${erreur_amp}`),
+      arch: await sftp.list(`${archive_amp}`),
+    };
+
+    sftp.disconnect();
+  }
+
+  return files[directory].filter(
+    (item) =>
+      isEqual(item.modifyTime, createdAt) || isEqual(item.accessTime, createdAt)
+  );
+};
 const getRemoteInfos = async (customer) => {
   const { inbound_amp, outbound_amp, erreur_amp, archive_amp } = customer;
-  const { SFTP_SERVER, SFTP_USER, SFTP_PASSWORD, SFTP_FOLDER, SFTP_PORT } =
-    process.env;
+  const { SFTP_SERVER, SFTP_USER, SFTP_PASSWORD, SFTP_PORT } = process.env;
   let files = {
     in: [],
     out: [],
@@ -138,12 +208,7 @@ const getRemoteInfos = async (customer) => {
     arch: [],
   };
   //Connexion au server SFTP
-  const sftp = new ClientSftp(
-    SFTP_SERVER,
-    SFTP_PORT,
-    SFTP_USER,
-    criptString(SFTP_PASSWORD)
-  );
+  const sftp = new ClientSftp(SFTP_SERVER, SFTP_PORT, SFTP_USER, SFTP_PASSWORD);
   const { state, msg } = await sftp.connect();
   if (!state) {
     sftp.disconnect();
@@ -232,7 +297,7 @@ const putRemoteFiles = async (customer) => {
       SFTP_SERVER,
       SFTP_PORT,
       SFTP_USER,
-      criptString(SFTP_PASSWORD)
+      SFTP_PASSWORD
     );
 
     const { state, msg } = await sftp.connect();
@@ -437,6 +502,8 @@ const downLoadFiles = async (customers) => {
 module.exports = {
   getAllCustomers,
   getRemoteCustomerInfos,
+  getCustomerRemoteFiles,
+  getCbsRemoteFiles,
   downLoadCustomersFiles,
   downLoadFiles,
   uploadFilesToAmplAccount,

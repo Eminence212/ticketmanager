@@ -1,13 +1,17 @@
 const { User, Customer, sequelize } = require("../models");
 const bcrypt = require("bcrypt");
 const { Op } = require("sequelize");
-const { criptString, decriptString } = require("../utils/criptograph");
+
 const {
   createLocalDirectory,
   deleteLocalDirectory,
   updateLocalDirectory,
 } = require("../utils/directory");
 const ClientSftp = require("../utils/ClientSftp");
+const {
+  getCustomerRemoteFiles,
+  getCbsRemoteFiles,
+} = require("../utils/cronTasks");
 
 const userController = {
   register: async (req, res) => {
@@ -262,6 +266,48 @@ const userController = {
       });
       if (customer) {
         res.json(customer);
+      } else {
+        return res.status(404).json({ msg: "Non trouvé" });
+      }
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
+  getFilter: async (req, res) => {
+    const { customer, createdAt, directory } = req.body;
+    try {
+      if (!customer)
+        return res
+          .status(400)
+          .json({ msg: "Veuillez sélectionner le nom du client." });
+      if (!createdAt)
+        return res.status(400).json({ msg: "Veuillez sélectionner la date." });
+      if (!directory)
+        return res
+          .status(400)
+          .json({ msg: "Veuillez sélectionner le répertoire." });
+      const cust = await Customer.findOne({
+        where: {
+          [Op.or]: [
+            { name: customer.toLowerCase() },
+            { name: customer.toUpperCase() },
+          ],
+        },
+      });
+
+      if (cust) {
+        res.json({
+          sourceFiles: await getCustomerRemoteFiles(
+            cust.dataValues,
+            directory,
+            createdAt
+          ),
+          destinationFiles: await getCbsRemoteFiles(
+            cust.dataValues,
+            directory,
+            createdAt
+          ),
+        });
       } else {
         return res.status(404).json({ msg: "Non trouvé" });
       }

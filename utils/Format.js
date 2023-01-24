@@ -23,7 +23,11 @@ const format = (input) => {
 const isToDay = (input) => {
   return format(new Date(input)) === format(new Date());
 };
+const isEqual = (debut, fin) => {
+  return format(new Date(debut)) === format(new Date(fin));
+};
 module.exports = {
   formatDate,
   isToDay,
+  isEqual,
 };
