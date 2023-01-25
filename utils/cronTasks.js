@@ -49,6 +49,7 @@ const getRemoteCustomerInfos = async (customer) => {
   const { state, msg } = await sftp.connect();
 
   if (!state) {
+    console.log({ Error: msg });
     sftp.disconnect();
   } else {
     files = {
@@ -145,6 +146,7 @@ const getCustomerRemoteFiles = async (customer, directory, createdAt) => {
   const { state, msg } = await sftp.connect();
 
   if (!state) {
+    console.log({ Error: msg });
     sftp.disconnect();
   } else {
     files = {
@@ -180,6 +182,7 @@ const getCbsRemoteFiles = async (customer, directory, createdAt) => {
   const { state, msg } = await sftp.connect();
 
   if (!state) {
+    console.log({Error: msg})
     sftp.disconnect();
   } else {
     files = {
@@ -211,6 +214,7 @@ const getRemoteInfos = async (customer) => {
   const sftp = new ClientSftp(SFTP_SERVER, SFTP_PORT, SFTP_USER, SFTP_PASSWORD);
   const { state, msg } = await sftp.connect();
   if (!state) {
+    console.log({ Error: msg });
     sftp.disconnect();
   } else {
     files = {
@@ -303,6 +307,7 @@ const putRemoteFiles = async (customer) => {
     const { state, msg } = await sftp.connect();
 
     if (!state) {
+      console.log({ Error: msg });
       sftp.disconnect();
     } else {
       for (const key of Object.keys(files)) {
@@ -393,6 +398,7 @@ const putCustomerRemoteFiles = async (customer) => {
   const { state, msg } = await sftp.connect();
 
   if (!state) {
+    console.log({ Error: msg });
     sftp.disconnect();
   } else {
     for (const key of Object.keys(files)) {
