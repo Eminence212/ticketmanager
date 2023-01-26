@@ -1,10 +1,11 @@
-const Cryptr = require("cryptr");
-require("dotenv").config();
-const cryptr = new Cryptr(process.env.CRYPTR_KEY);
-
-export const criptString = (str) => {
-  return cryptr.encrypt(str);
+const base64 = require("base-64");
+const criptString = (str) => {
+  return base64.encode(str);
 };
-export const decriptString = (str) => {
-  return cryptr.decrypt(str);
+const decriptString = (str) => {
+  return base64.decode(str);
+};
+module.exports = {
+  criptString,
+  decriptString,
 };
