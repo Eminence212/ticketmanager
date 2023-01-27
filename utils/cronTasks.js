@@ -182,7 +182,7 @@ const getCbsRemoteFiles = async (customer, directory, createdAt) => {
   const { state, msg } = await sftp.connect();
 
   if (!state) {
-    console.log({Error: msg})
+    console.log({ Error: msg });
     sftp.disconnect();
   } else {
     files = {
@@ -398,7 +398,6 @@ const putCustomerRemoteFiles = async (customer) => {
   const { state, msg } = await sftp.connect();
 
   if (!state) {
-    console.log({ Error: msg });
     sftp.disconnect();
   } else {
     for (const key of Object.keys(files)) {
@@ -485,18 +484,21 @@ const uploadFilesToCustomerAccount = async (customers) => {
       await putCustomerRemoteFiles(customers[i]);
     }
   } catch (error) {
-    console.log(`Erreur : ${error}`);
+    console.log(
+      `Error for upload the files to the Customer Account : ${error}`
+    );
   }
 };
 const downLoadFiles = async (customers) => {
   try {
     let list = [];
     for (i = 0; i < customers.length; i++) {
-      const newData = await getRemoteInfos(customers[i]);
+      const newData = await getRemoteInfos(customers[i].dataValues);
+
       list[i] = {
-        ...newData.dataValues,
+        ...newData,
         files: newData.files,
-        User: newData.dataValues.User.dataValues,
+        User: newData.User.dataValues,
       };
     }
     return list;

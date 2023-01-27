@@ -20,5 +20,5 @@ app.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`);
   require("events").defaultMaxListeners = 0;
   // cron.schedule(`*/30 * * * * *`, () => main());
-  cron.schedule(`*/10 * * * * *`, () => main());
+  cron.schedule(`* * * * *`, () => main());
 });
