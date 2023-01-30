@@ -277,7 +277,7 @@ const userController = {
   },
   getFilter: async (req, res) => {
     const { customer, createdAt, directory } = req.body;
-    console.log({ customer, createdAt, directory });
+
     try {
       if (!customer)
         return res
@@ -289,8 +289,7 @@ const userController = {
         return res
           .status(400)
           .json({ msg: "Veuillez sélectionner le répertoire." });
-      
-      
+
       const cust = await Customer.findOne({
         where: {
           [Op.or]: [
