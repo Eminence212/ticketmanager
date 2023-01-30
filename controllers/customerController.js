@@ -11,7 +11,9 @@ const ClientSftp = require("../utils/ClientSftp");
 const {
   getCustomerRemoteFiles,
   getCbsRemoteFiles,
+  selfValidation,
 } = require("../utils/cronTasks");
+const { readPayementFile } = require("../utils/file");
 
 const userController = {
   register: async (req, res) => {
@@ -275,6 +277,7 @@ const userController = {
   },
   getFilter: async (req, res) => {
     const { customer, createdAt, directory } = req.body;
+    console.log({ customer, createdAt, directory });
     try {
       if (!customer)
         return res
@@ -286,6 +289,8 @@ const userController = {
         return res
           .status(400)
           .json({ msg: "Veuillez sélectionner le répertoire." });
+      
+      
       const cust = await Customer.findOne({
         where: {
           [Op.or]: [
@@ -455,7 +460,7 @@ const userController = {
       return res.status(500).json({ msg: error.message });
     }
   },
-  validation: async (req, res) => {
+  auto_validation: async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const { autovalidation } = req.body;
@@ -475,6 +480,15 @@ const userController = {
     } catch (error) {
       return res.status(500).json({ msg: error.message });
     }
+  },
+  validation: async (req, res) => {
+    const { customer_name, file_name, directory } = req.body;
+
+    const customer = await Customer.findAll({
+      where: { name: customer_name },
+    });
+    const rep = await selfValidation(customer, file_name, directory);
+    res.json(rep);
   },
   delete: async (req, res) => {
     console.log({ req });
@@ -514,6 +528,18 @@ const userController = {
       await t.rollback();
       return res.status(500).json({ msg: error.message });
     }
+  },
+  readFile: async (req, res) => {
+    let content;
+    const { customer_name, file_name, directory } = req.body;
+
+    if (customer_name && file_name && directory) {
+      const customer = await Customer.findAll({
+        where: { name: customer_name },
+      });
+      content = await readPayementFile(customer, file_name, directory);
+    }
+    res.json(content);
   },
 };
 module.exports = userController;
