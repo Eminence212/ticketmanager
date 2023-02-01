@@ -529,7 +529,7 @@ const userController = {
     }
   },
   readFile: async (req, res) => {
-    let content;
+    let content = [];
     const { customer_name, file_name, directory } = req.body;
 
     if (customer_name && file_name && directory) {
@@ -538,7 +538,7 @@ const userController = {
       });
       content = await readPayementFile(customer, file_name, directory);
     }
-    res.json(content);
+    res.json(content?.CstmrCdtTrfInitn);
   },
 };
 module.exports = userController;

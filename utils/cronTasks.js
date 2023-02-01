@@ -3,6 +3,7 @@ const { User, Customer, sequelize } = require("../models");
 const ClientSftp = require("./ClientSftp");
 const path = require("path");
 const { formatDate, isEqual } = require("./Format");
+
 require("dotenv").config();
 const getAllCustomers = async () => {
   const customers = await Customer.findAll({
@@ -209,10 +210,7 @@ const getCustomerRemoteFiles = async (customer, directory, createdAt) => {
     sftp.disconnect();
   }
 
-  return files[directory].filter(
-    (item) =>
-      isEqual(item.modifyTime, createdAt) || isEqual(item.accessTime, createdAt)
-  );
+  return files[directory].filter((item) => isEqual(item.modifyTime, createdAt));
 };
 const getCbsRemoteFiles = async (customer, directory, createdAt) => {
   const { inbound_amp, outbound_amp, erreur_amp, archive_amp } = customer;
@@ -245,10 +243,7 @@ const getCbsRemoteFiles = async (customer, directory, createdAt) => {
     sftp.disconnect();
   }
 
-  return files[directory].filter(
-    (item) =>
-      isEqual(item.modifyTime, createdAt) || isEqual(item.accessTime, createdAt)
-  );
+  return files[directory].filter((item) => isEqual(item.modifyTime, createdAt));
 };
 const getRemoteInfos = async (customer) => {
   const { inbound_amp, outbound_amp, erreur_amp, archive_amp } = customer;
@@ -387,7 +382,7 @@ const getRemoteInfo = async (customer, file_name, directory) => {
 
     sftp.disconnect();
   }
-  console.log({ files });
+
   return {
     ...customer,
     files: files[directory]
@@ -796,7 +791,6 @@ const selfValidation = async (customer, file_name, directory) => {
   }
   return newCustomersAmplitude;
 };
-
 
 module.exports = {
   getAllCustomers,
