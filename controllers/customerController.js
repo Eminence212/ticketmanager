@@ -12,6 +12,7 @@ const {
   getCustomerRemoteFiles,
   getCbsRemoteFiles,
   selfValidation,
+  download,
 } = require("../utils/cronTasks");
 const { readPayementFile } = require("../utils/file");
 
@@ -481,6 +482,15 @@ const userController = {
     }
   },
   validation: async (req, res) => {
+    const { customer_name, file_name, directory } = req.body;
+
+    const customer = await Customer.findAll({
+      where: { name: customer_name },
+    });
+    const rep = await selfValidation(customer, file_name, directory);
+    res.json(rep);
+  },
+  download: async (req, res) => {
     const { customer_name, file_name, directory } = req.body;
 
     const customer = await Customer.findAll({
