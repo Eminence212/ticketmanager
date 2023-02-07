@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const urlBase = path.join(__dirname, "..", "files");
 
-export const createLocalDirectory = (customer_name, folder_names = []) => {
+const createLocalDirectory = (customer_name, folder_names = []) => {
   try {
     fs.mkdir(path.join(urlBase, customer_name), () => {
       folder_names.map((name) => {
@@ -16,7 +16,7 @@ export const createLocalDirectory = (customer_name, folder_names = []) => {
   }
 };
 
-export const deleteLocalDirectory = (customer_name) => {
+const deleteLocalDirectory = (customer_name) => {
   try {
     fs.rm(
       path.join(urlBase, customer_name),
@@ -27,7 +27,7 @@ export const deleteLocalDirectory = (customer_name) => {
     console.log(`${error} `);
   }
 };
-export const updateLocalDirectory = async (curr_name, new_name) => {
+const updateLocalDirectory = async (curr_name, new_name) => {
   const currPath = path.join(urlBase, curr_name);
   const newPath = path.join(urlBase, new_name);
 
@@ -41,4 +41,10 @@ export const updateLocalDirectory = async (curr_name, new_name) => {
   } catch (error) {
     console.log(`${error} `);
   }
+};
+
+module.exports = {
+  createLocalDirectory,
+  deleteLocalDirectory,
+  updateLocalDirectory,
 };
