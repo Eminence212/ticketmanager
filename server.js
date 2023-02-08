@@ -6,9 +6,13 @@ const cron = require("node-cron");
 
 const main = require("./utils/mainTasks");
 const app = express();
-
+const options = {
+  origin: "*",
+  methods: ["POST", "GET", "PATCH", "DELETE","PUT"],
+  allowedHeaders: ["content-type"],
+};
 app.use(express.json());
-app.use(cors());
+app.use(cors(options));
 app.use(cookieParser());
 
 //Routes
