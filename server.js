@@ -12,7 +12,7 @@ const options = {
   allowedHeaders: ["content-type", "Authorization"],
   credentials: true,
 };
-app.options("*", cors(options));
+app.options(cors(options));
 app.use(express.json());
 app.use(cookieParser());
 
