@@ -8,11 +8,12 @@ const main = require("./utils/mainTasks");
 const app = express();
 const options = {
   origin: "*",
-  methods: ["POST", "GET", "PATCH", "DELETE","PUT"],
-  allowedHeaders: ["content-type"],
+  methods: ["POST", "GET", "PATCH", "DELETE", "PUT"],
+  allowedHeaders: ["content-type", "Authorization"],
+  credentials: true,
 };
+app.options("*", cors(options));
 app.use(express.json());
-app.use(cors(options));
 app.use(cookieParser());
 
 //Routes
