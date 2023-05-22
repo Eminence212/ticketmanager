@@ -1,4 +1,5 @@
-const { User } = require("../models");
+const User  = require("../models/user");
+
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const {
@@ -21,7 +22,6 @@ const userController = {
         return res
           .status(400)
           .json({ msg: "Veuillez saisir le mot de passe." });
-
       const user = await User.findOne({
         where: {
           [Op.or]: [{ name: name.toLowerCase() }, { name: name.toUpperCase() }],
@@ -31,22 +31,18 @@ const userController = {
         return res
           .status(400)
           .json({ msg: "Ce nom d'utilisateur existe déjà." });
-
       if (password.length < 6)
         return res.status(400).json({
           msg: "Le mot de passe doit comporter au moins 6 caractères.",
         });
       const passwordHash = await bcrypt.hash(password, 12);
-
       const newUser = {
         name: name.toUpperCase(),
         password: passwordHash,
         role,
       };
-
       const activation_token = createActivationToken(newUser);
       const url = `/user/activate/${activation_token}`;
-
       await User.create(newUser);
       res.json({
         msg: "Enregistrement réussi !",
@@ -64,7 +60,6 @@ const userController = {
         process.env.ACTIVATION_TOKEN_SECRET
       );
       const { name, password } = user;
-
       const check = await User.findOne({
         where: {
           [Op.or]: [{ name: name.toLowerCase() }, { name: name.toUpperCase() }],
@@ -89,18 +84,14 @@ const userController = {
           [Op.or]: [{ name: name.toLowerCase() }, { name: name.toUpperCase() }],
         },
       });
-
       if (!user)
         return res
           .status(400)
           .json({ msg: "Ce nom d'utilisateur n'existe pas." });
-
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch)
         return res.status(400).json({ msg: "Le mot de passe est incorrect." });
-
       const refresh_token = createRefreshToken({ id: user.id });
-
       res.json({ msg: "Connexion réussie !", refresh_token });
     } catch (error) {
       return res.status(500).json({ msg: error.message });
@@ -142,9 +133,7 @@ const userController = {
           .status(400)
           .json({ msg: "Ce nom d'utilisateur n'existe pas." });
       const access_token = createAccessToken({ id: user.id });
-
       const url = `/user/reset/${access_token}/${user.id}`;
-
       res.json({
         url: url,
         access_token: access_token,
@@ -180,7 +169,6 @@ const userController = {
         attributes: ["id", "name", "role", "createdAt", "updatedAt"],
         order: [["name", "ASC"]],
       });
-
       res.json(users);
     } catch (error) {
       return res.status(500).json({ msg: error.message });
@@ -202,7 +190,6 @@ const userController = {
       if (!userById) {
         return res.status(404).json({ msg: "Non trouvé" });
       }
-
       await User.update(
         {
           name: name.toUpperCase(),
