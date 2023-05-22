@@ -1,4 +1,4 @@
-const { User, Customer } = require("../models");
+const { User } = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const {
@@ -168,7 +168,6 @@ const userController = {
     try {
       const user = await User.findByPk(req.user.id, {
         attributes: ["id", "name", "role"],
-        include: [{ model: Customer }],
       });
       res.json(user);
     } catch (error) {
@@ -179,7 +178,6 @@ const userController = {
     try {
       const users = await User.findAll({
         attributes: ["id", "name", "role", "createdAt", "updatedAt"],
-        include: [{ model: Customer }],
         order: [["name", "ASC"]],
       });
 
