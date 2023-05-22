@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 //Routes
- app.use("/api/v1/user", require("./routes/userRoute"));
+app.use("/api/v1/user", require("./routes/userRoute").default);
 // app.use("/api/v1/customer", cors(options), require("./routes/customerRoute"));
 
 const PORT = process.env.PORT;
