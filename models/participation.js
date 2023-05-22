@@ -9,6 +9,15 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Participation.belongsTo(models.Evenement, {
+        foreignKey: "evenementId",
+      });
+      Participation.belongsTo(models.Participant, {
+        foreignKey: "participantId",
+      });
+      Participation.belongsTo(models.Place, {
+        foreignKey: "placeId",
+      });
     }
   }
   Participation.init(
@@ -22,6 +31,18 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER(1),
         allowNull: false,
         defaultValue: 1,
+      },
+      evenementId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      participantId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      placeId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
       },
     },
     {

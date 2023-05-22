@@ -19,6 +19,30 @@ module.exports = {
         allowNull: false,
         defaultValue: 1,
       },
+      evenementId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Evenement",
+          key: "id",
+        },
+      },
+      participantId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Participant",
+          key: "id",
+        },
+      },
+      placeId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Place",
+          key: "id",
+        },
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
