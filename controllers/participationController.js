@@ -2,7 +2,8 @@ const { Place, Participation, Participant, Evenement } = require("../models");
 const participationController = {
   register: async (req, res) => {
     try {
-      const { participantId, evenementId, placeId, accompagner } = req.body;
+      const { participantId, evenementId, placeId, nombre } = req.body;
+      let total = nombre;
       if (!participantId)
         return res
           .status(400)
@@ -13,15 +14,15 @@ const participationController = {
           .json({ msg: "Veuillez choisir le nom de l'événement." });
       if (!placeId)
         return res.status(400).json({ msg: "Veuillez choisir la place." });
-      if (!accompagner)
+      if (!nombre)
         return res
           .status(400)
-          .json({ msg: "Veuillez le nombre d'accompagnateur." });
+          .json({ msg: "Veuillez saisir le nombre de participant." });
 
-      if (parseInt(accompagner) !== 1 || parseInt(accompagner) !== 2)
+      if (parseInt(nombre) < 1 || parseInt(nombre) > 2)
         return res
           .status(400)
-          .json({ msg: "Le nombre d'accopagnateur doit être entre 1 ou 2" });
+          .json({ msg: "Le nombre d'accopagnateur doit être 1 ou 2" });
       const participantion = await Participation.findOne({
         where: { participantId, evenementId, placeId },
       });
@@ -30,31 +31,35 @@ const participationController = {
           msg: `La participantion  existe déjà.`,
         });
       const place = await Place.findOne({
-        where: { placeId },
+        where: { id: placeId },
       });
       const nombrepart = await Participation.findAll({
         where: { evenementId, placeId },
       });
 
-      if (place.capacite - nombrepart.length < 0) {
+      for (let index = 0; index < nombrepart.length; index++) {
+        total += nombrepart[index]["nombre"];
+      }
+
+      if (total - place.capacite <= 0) {
         await Participation.create({
           participantId,
           evenementId,
           placeId,
-          accompagner,
+          nombre,
         });
       } else {
         return res.status(400).json({
-          msg: `Le nombre de place déjà suffisant pour cet événement`,
+          msg: `Le nombre de place déjà suffisant pour cette place`,
         });
       }
 
       res.json({ msg: "Participantion ajoutée avec succès !" });
     } catch (error) {
+      console.error({ error });
       return res.status(500).json({ msg: error.message });
     }
   },
-
   getById: async (req, res) => {
     try {
       const part = await Participation.findByPk(req.params.id, {
@@ -87,7 +92,7 @@ const participationController = {
   update: async (req, res) => {
     try {
       const id = req.params.id;
-      const { participantId, evenementId, placeId, accompagner } = req.body;
+      const { participantId, evenementId, placeId, nombre } = req.body;
       const partById = await Participation.findOne({ where: { id: id } });
       if (!partById) {
         return res.status(404).json({ msg: "Non trouvée" });
@@ -102,12 +107,12 @@ const participationController = {
           .json({ msg: "Veuillez choisir le nom de l'événement." });
       if (!placeId)
         return res.status(400).json({ msg: "Veuillez choisir la place." });
-      if (!accompagner)
+      if (!nombre)
         return res
           .status(400)
-          .json({ msg: "Veuillez le nombre d'accompagnateur." });
+          .json({ msg: "Veuillez saisir le nombre d'accompagnateur." });
 
-      if (parseInt(accompagner) !== 1 || parseInt(accompagner) !== 2)
+      if (parseInt(nombre) < 1 || parseInt(nombre) > 2)
         return res
           .status(400)
           .json({ msg: "Le nombre d'accopagnateur doit être entre 1 ou 2" });
@@ -118,14 +123,17 @@ const participationController = {
       const nombrepart = await Participation.findAll({
         where: { evenementId, placeId },
       });
-
-      if (place.capacite - nombrepart.length <= 0) {
+      let total = nombre;
+      for (let index = 0; index < nombrepart.length; index++) {
+        total += nombrepart[index]["nombre"];
+      }
+      if (total - place.capacite <= 0) {
         const participantion = await Participation.findOne({
           where: { participantId, evenementId, placeId },
         });
         if (participantion) {
           await Participation.update(
-            { participantId, evenementId, placeId, accompagner },
+            { participantId, evenementId, placeId, nombre },
             { where: { id: id } }
           );
           res.json({ msg: "Mise à jour réussie !" });
