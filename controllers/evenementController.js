@@ -89,7 +89,7 @@ const evenementController = {
           .json({ msg: "Veuillez choisir la date de l'événement." });
 
       const event = await Evenement.findOne({ where: { name } });
-      if (!event)
+      if (event)
         await Evenement.update({ name, lieu, date }, { where: { id: id } });
       res.json({ msg: "Mise à jour réussie !" });
     } catch (error) {

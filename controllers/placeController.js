@@ -81,7 +81,7 @@ const placeController = {
           .json({ msg: "Veuillez saisir le nombre de place." });
 
       const place = await Place.findOne({ where: { name } });
-      if (!place) await Place.update({ name, capacite }, { where: { id: id } });
+      if (place) await Place.update({ name, capacite }, { where: { id: id } });
       res.json({ msg: "Mise à jour réussie !" });
     } catch (error) {
       return res.status(500).json({ msg: error.message });
