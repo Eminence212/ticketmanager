@@ -6,5 +6,6 @@ router.post("/add", auth, participationController.register);
 router.get("/:id", auth, participationController.getById);
 router.get("/", auth, participationController.getAll);
 router.patch("/update/:id", auth, participationController.update);
+router.patch("/presence/:id", auth, participationController.check);
 router.delete("/delete/:id", auth, authAdmin, participationController.delete);
 module.exports = router;

@@ -143,7 +143,21 @@ const participationController = {
       return res.status(500).json({ msg: error.message });
     }
   },
+  check: async (req, res) => {
+    try {
+      const id = req.params.id;
+      const { presence } = req.body;
+      const partById = await Participation.findOne({ where: { id: id } });
+      if (!partById) {
+        return res.status(404).json({ msg: "Non trouvée" });
+      }
 
+      await Participation.update({ presence }, { where: { id: id } });
+      res.json({ msg: "Mise à jour réussie !" });
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
   delete: async (req, res) => {
     try {
       const id = req.params.id;
