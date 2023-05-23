@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
       date: {
         type: DataTypes.DATE,
         allowNull: false,
+        unique: true,
       },
       lieu: {
         type: DataTypes.STRING(255),

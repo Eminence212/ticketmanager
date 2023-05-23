@@ -17,6 +17,7 @@ module.exports = {
       date: {
         type: Sequelize.DATE,
         allowNull: false,
+        unique: true,
       },
       lieu: {
         type: Sequelize.STRING(255),
