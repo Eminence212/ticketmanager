@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "placeId",
         through: "Participation",
       });
-      Place.belongsTo(models.Participation, {
+      Place.hasMany(models.Participation, {
         foreignKey: "placeId",
       });
     }

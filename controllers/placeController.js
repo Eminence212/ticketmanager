@@ -1,4 +1,4 @@
-const { Place, Participation } = require("../models");
+const { Place, Participation, Participant, Evenement } = require("../models");
 const placeController = {
   register: async (req, res) => {
     try {
@@ -21,8 +21,10 @@ const placeController = {
         });
 
       await Place.create({ name, capacite });
+
       res.json({ msg: "Place ajoutée avec succès !" });
     } catch (error) {
+      console.log({ error });
       return res.status(500).json({ msg: error.message });
     }
   },
@@ -30,7 +32,10 @@ const placeController = {
   getById: async (req, res) => {
     try {
       const place = await Place.findByPk(req.params.id, {
-        include: Participation,
+        include: {
+          model: Participation,
+          include: [Participant, Evenement],
+        },
       });
       if (place) {
         res.json(place);
@@ -43,7 +48,12 @@ const placeController = {
   },
   getAll: async (req, res) => {
     try {
-      const place = await Place.findAll({ include: Participation });
+      const place = await Place.findAll({
+        include: {
+          model: Participation,
+          include: [Participant, Evenement],
+        },
+      });
       if (place) {
         res.json(place);
       } else {
