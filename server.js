@@ -15,6 +15,7 @@ app.use(cors(options));
 
 //Routes
 app.use("/api/v1/user", require("./routes/userRoute"));
+app.use("/api/v1/place", require("./routes/placeRoute"));
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

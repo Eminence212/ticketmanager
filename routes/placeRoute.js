@@ -1,0 +1,10 @@
+const router = require("express").Router();
+const placeController = require("../controllers/placeController");
+const auth = require("../middlewares/auth");
+const authAdmin = require("../middlewares/authAdmin");
+router.post("/add", auth, placeController.register);
+router.get("/:id", auth, placeController.getById);
+router.get("/", auth, placeController.getAll);
+router.patch("/update/:id", auth, placeController.update);
+router.delete("/delete/:id", auth, authAdmin, placeController.delete);
+module.exports = router;
