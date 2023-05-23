@@ -1,0 +1,10 @@
+const router = require("express").Router();
+const evenementController = require("../controllers/evenementController");
+const auth = require("../middlewares/auth");
+const authAdmin = require("../middlewares/authAdmin");
+router.post("/add", auth, evenementController.register);
+router.get("/:id", auth, evenementController.getById);
+router.get("/", auth, evenementController.getAll);
+router.patch("/update/:id", auth, evenementController.update);
+router.delete("/delete/:id", auth, authAdmin, evenementController.delete);
+module.exports = router;

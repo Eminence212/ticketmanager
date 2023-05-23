@@ -24,7 +24,6 @@ const placeController = {
 
       res.json({ msg: "Place ajoutée avec succès !" });
     } catch (error) {
-      console.log({ error });
       return res.status(500).json({ msg: error.message });
     }
   },

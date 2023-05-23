@@ -16,6 +16,9 @@ app.use(cors(options));
 //Routes
 app.use("/api/v1/user", require("./routes/userRoute"));
 app.use("/api/v1/place", require("./routes/placeRoute"));
+app.use("/api/v1/evenement", require("./routes/evenementRoute"));
+app.use("/api/v1/participant", require("./routes/participantRoute"));
+app.use("/api/v1/participation", require("./routes/participationRoute"));
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
